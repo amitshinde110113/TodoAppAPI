@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 exports.signUp = (req, res, next) => {
     User.find({ email: req.body.email }).exec().then(async (result) => {
         if (result.length >= 1) {
-            res.status(403).json({ message: 'Already exist.' })
+            res.status(403).json({ message: 'Email already exist.' })
         } else {
             const hash = await bcrypt.hash(req.body.password, saltRounds)
             const user = new User({
