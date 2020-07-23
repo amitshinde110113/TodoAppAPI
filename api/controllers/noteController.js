@@ -17,9 +17,12 @@ exports.create = (req, res, next) => {
     })
 }
 
-exports.getNotes = (req, res, next) => {
-    Note.find({ user: req.currentUser._id }).populate('user').sort({'createdAt':-1}).then(result => {
-        res.status(201).json(result);
+exports.getNotes = async (req, res, next) => {
+    const page = req.params.page;
+    const skip = page * 10;
+    const totalCount = await Note.find({ user: req.currentUser._id }).count()
+    Note.find({ user: req.currentUser._id }).populate('user').skip(skip).limit(10).sort({ 'createdAt': -1 }).then(result => {
+        res.status(201).json({ totalCount: totalCount,notes: result });
     }).catch(err => {
         res.status(401).json(err);
     })
